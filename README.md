@@ -18,7 +18,6 @@ import (
 func main() {
 
 	driver.Driver.Register(`test`, &Test{})
-	driver.Driver.Register(`test1`, &Test1{})
 
 	driver.Driver.RunWait()
 
@@ -39,27 +38,6 @@ func (t *Test) Stop() error {
 func (t *Test) Run() error {
 	for {
 		fmt.Println(`a`)
-		time.Sleep(2 * time.Second)
-	}
-}
-
-
-type Test1 struct {
-
-}
-
-
-func (t *Test1) Stop() error {
-	fmt.Println("1haha")
-	time.Sleep(5 * time.Second)
-	fmt.Println("1xixi")
-
-	return nil
-}
-
-func (t *Test1) Run() error {
-	for {
-		fmt.Println(`1a`)
 		time.Sleep(2 * time.Second)
 	}
 }
