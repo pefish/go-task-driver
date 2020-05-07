@@ -7,20 +7,26 @@ task driver for golang
 ## Quick start
 
 ```go
-package main
+package task_driver
 
 import (
 	"fmt"
 	"time"
 )
 
+func ExampleDriverType_Register() {
+	driver := NewTaskDriver()
 
-func main() {
+	driver.Register(`test`, &Test{})
 
-	driver.Driver.Register(`test`, &Test{})
+	driver.RunWait()
 
-	driver.Driver.RunWait()
-
+	// Output:
+	// a
+	// [INFO] [test]: stopping...
+	// haha
+	// xixi
+	// [INFO] [test]: stopped
 }
 
 type Test struct {
@@ -36,11 +42,10 @@ func (t *Test) Stop() error {
 }
 
 func (t *Test) Run() error {
-	for {
-		fmt.Println(`a`)
-		time.Sleep(2 * time.Second)
-	}
+	fmt.Println(`a`)
+	return nil
 }
+
 
 ```
 

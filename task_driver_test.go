@@ -1,4 +1,4 @@
-package driver
+package task_driver
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 )
 
 func ExampleDriverType_Register() {
-	driver := NewDriver()
+	driver := NewTaskDriver()
 
 	driver.Register(`test`, &Test{})
 

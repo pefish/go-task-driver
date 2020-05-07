@@ -1,4 +1,4 @@
-package driver
+package task_driver
 
 import (
 	"github.com/pefish/go-interface-logger"
@@ -14,29 +14,29 @@ type Runner interface {
 	Stop() error
 }
 
-type DriverType struct {
+type TaskDriver struct {
 	runners   map[string]Runner
 	waitGroup sync.WaitGroup
 	logger    go_interface_logger.InterfaceLogger
 }
 
-func NewDriver() *DriverType {
-	return &DriverType{
+func NewTaskDriver() *TaskDriver {
+	return &TaskDriver{
 		runners:   map[string]Runner{},
 		waitGroup: sync.WaitGroup{},
 		logger:    go_interface_logger.DefaultLogger,
 	}
 }
 
-func (driver *DriverType) SetLogger(logger go_interface_logger.InterfaceLogger) {
+func (driver *TaskDriver) SetLogger(logger go_interface_logger.InterfaceLogger) {
 	driver.logger = logger
 }
 
-func (driver *DriverType) Register(name string, runner Runner) {
+func (driver *TaskDriver) Register(name string, runner Runner) {
 	driver.runners[name] = runner
 }
 
-func (driver *DriverType) RunWait() {
+func (driver *TaskDriver) RunWait() {
 	finished := make(chan bool)
 	go func() {
 		for name, runner := range driver.runners {
@@ -64,7 +64,7 @@ func (driver *DriverType) RunWait() {
 	driver.stopWait()
 }
 
-func (driver *DriverType) stopWait() {
+func (driver *TaskDriver) stopWait() {
 	for name, runner := range driver.runners {
 		driver.logger.InfoF("[%s]: stopping...", name)
 		err := runner.Stop()
