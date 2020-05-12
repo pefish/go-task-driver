@@ -8,7 +8,7 @@ import (
 func ExampleDriverType_Register() {
 	driver := NewTaskDriver()
 
-	driver.Register(`test`, &Test{})
+	driver.Register(&Test{})
 
 	driver.RunWait()
 
@@ -35,5 +35,9 @@ func (t *Test) Stop() error {
 func (t *Test) Run() error {
 	fmt.Println(`a`)
 	return nil
+}
+
+func (t *Test) GetName() string {
+	return "hsgh"
 }
 
