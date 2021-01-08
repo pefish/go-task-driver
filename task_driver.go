@@ -1,7 +1,7 @@
 package task_driver
 
 import (
-	"github.com/pefish/go-interface-logger"
+	"github.com/pefish/go-logger"
 	"os"
 	"os/signal"
 	"sync"
@@ -18,18 +18,18 @@ type Runner interface {
 type TaskDriver struct {
 	runners   []Runner
 	waitGroup sync.WaitGroup
-	logger    go_interface_logger.InterfaceLogger
+	logger    go_logger.InterfaceLogger
 }
 
 func NewTaskDriver() *TaskDriver {
 	return &TaskDriver{
 		runners:   make([]Runner, 0),
 		waitGroup: sync.WaitGroup{},
-		logger:    go_interface_logger.DefaultLogger,
+		logger:    go_logger.DefaultLogger,
 	}
 }
 
-func (driver *TaskDriver) SetLogger(logger go_interface_logger.InterfaceLogger) {
+func (driver *TaskDriver) SetLogger(logger go_logger.InterfaceLogger) {
 	driver.logger = logger
 }
 

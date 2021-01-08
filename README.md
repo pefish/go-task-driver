@@ -17,7 +17,7 @@ import (
 func ExampleDriverType_Register() {
 	driver := NewTaskDriver()
 
-	driver.Register(`test`, &Test{})
+	driver.Register(&Test{})
 
 	driver.RunWait()
 
@@ -33,6 +33,9 @@ type Test struct {
 
 }
 
+func (s *Test) GetName() string {
+	return "test"
+}
 
 func (t *Test) Stop() error {
 	fmt.Println("haha")
