@@ -1,5 +1,5 @@
 module github.com/pefish/go-task-driver
 
-go 1.14
+go 1.16
 
-require github.com/pefish/go-logger v0.4.9
+require github.com/pefish/go-logger v0.4.15

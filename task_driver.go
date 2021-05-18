@@ -37,7 +37,7 @@ func (driver *TaskDriver) Register(runner Runner) {
 	driver.runners = append(driver.runners, runner)
 }
 
-func (driver *TaskDriver) RunWait() {
+func (driver *TaskDriver) RunWait(exit <- chan struct{}) {
 	finished := make(chan bool)
 	go func() {
 		for _, runner := range driver.runners {
@@ -54,12 +54,19 @@ func (driver *TaskDriver) RunWait() {
 		close(finished)
 	}()
 
-	signalChan := make(chan os.Signal, 1)
-	signal.Notify(signalChan, syscall.SIGINT, syscall.SIGTERM)
+	if exit != nil {
+		select {
+		case <-exit:
+		case <-finished:
+		}
+	} else {
+		signalChan := make(chan os.Signal, 1)
+		signal.Notify(signalChan, syscall.SIGINT, syscall.SIGTERM)
 
-	select {
-	case <-signalChan:
-	case <-finished:
+		select {
+		case <-signalChan:
+		case <-finished:
+		}
 	}
 
 	driver.stopWait()

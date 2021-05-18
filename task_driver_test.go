@@ -10,7 +10,8 @@ func ExampleDriverType_Register() {
 
 	driver.Register(&Test{})
 
-	driver.RunWait()
+	a := make(chan struct{}, 0)
+	driver.RunWait(a)
 
 	// Output:
 	// a
