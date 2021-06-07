@@ -9,28 +9,23 @@ import (
 )
 
 type Runner interface {
-	// run in goroutine
+	// run in goroutine, do not exit
 	Run() error
 	Stop() error
 	GetName() string
+	GetLogger() go_logger.InterfaceLogger
 }
 
 type TaskDriver struct {
 	runners   []Runner
 	waitGroup sync.WaitGroup
-	logger    go_logger.InterfaceLogger
 }
 
 func NewTaskDriver() *TaskDriver {
 	return &TaskDriver{
 		runners:   make([]Runner, 0),
 		waitGroup: sync.WaitGroup{},
-		logger:    go_logger.DefaultLogger,
 	}
-}
-
-func (driver *TaskDriver) SetLogger(logger go_logger.InterfaceLogger) {
-	driver.logger = logger
 }
 
 func (driver *TaskDriver) Register(runner Runner) {
@@ -46,7 +41,7 @@ func (driver *TaskDriver) RunWait(exit <- chan struct{}) {
 				defer driver.waitGroup.Done()
 				err := runner.Run()
 				if err != nil {
-					driver.logger.ErrorF("[%s]: %#v", runner.GetName(), err)
+					runner.GetLogger().ErrorF("%#v", err)
 				}
 			}(runner)
 		}
@@ -74,12 +69,12 @@ func (driver *TaskDriver) RunWait(exit <- chan struct{}) {
 
 func (driver *TaskDriver) stopWait() {
 	for _, runner := range driver.runners {
-		driver.logger.InfoF("[%s]: stopping...", runner.GetName())
+		runner.GetLogger().Info("stopping...")
 		err := runner.Stop()
 		if err != nil {
-			driver.logger.ErrorF("[%s]: %#v", runner.GetName(), err)
+			runner.GetLogger().Error("%#v", err)
 		}
-		driver.logger.InfoF("[%s]: stopped", runner.GetName())
+		runner.GetLogger().Info("stopped")
 	}
 }
 
