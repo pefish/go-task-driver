@@ -13,12 +13,12 @@ type Runner interface {
 	Run() error
 	Stop() error
 	GetName() string
-	GetLogger() go_logger.InterfaceLogger
 }
 
 type TaskDriver struct {
 	runners   []Runner
 	waitGroup sync.WaitGroup
+	logger go_logger.InterfaceLogger
 }
 
 func NewTaskDriver() *TaskDriver {
@@ -26,6 +26,10 @@ func NewTaskDriver() *TaskDriver {
 		runners:   make([]Runner, 0),
 		waitGroup: sync.WaitGroup{},
 	}
+}
+
+func (driver *TaskDriver) SetLogger(logger go_logger.InterfaceLogger) {
+	driver.logger = logger
 }
 
 func (driver *TaskDriver) Register(runner Runner) {
@@ -41,7 +45,7 @@ func (driver *TaskDriver) RunWait(exit <- chan struct{}) {
 				defer driver.waitGroup.Done()
 				err := runner.Run()
 				if err != nil {
-					runner.GetLogger().ErrorF("%#v", err)
+					driver.logger.ErrorF("%#v", err)
 				}
 			}(runner)
 		}
@@ -69,12 +73,12 @@ func (driver *TaskDriver) RunWait(exit <- chan struct{}) {
 
 func (driver *TaskDriver) stopWait() {
 	for _, runner := range driver.runners {
-		runner.GetLogger().Info("stopping...")
+		driver.logger.Info("stopping...")
 		err := runner.Stop()
 		if err != nil {
-			runner.GetLogger().Error("%#v", err)
+			driver.logger.Error("%#v", err)
 		}
-		runner.GetLogger().Info("stopped")
+		driver.logger.Info("stopped")
 	}
 }
 
