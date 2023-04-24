@@ -1,6 +1,7 @@
 package task_driver
 
 import (
+	"context"
 	"fmt"
 	"time"
 )
@@ -10,21 +11,22 @@ func ExampleDriverType_Register() {
 
 	driver.Register(&Test{})
 
-	a := make(chan struct{}, 0)
-	driver.RunWait(a)
+	ctx, cancel := context.WithCancel(context.Background())
+	go func() {
+		time.Sleep(4 * time.Second)
+		cancel()
+	}()
+	driver.RunWait(ctx)
 
 	// Output:
-	// a
-	// [INFO] [test]: stopping...
+	// 1
+	// 1
 	// haha
 	// xixi
-	// [INFO] [test]: stopped
 }
 
 type Test struct {
-
 }
-
 
 func (t *Test) Stop() error {
 	fmt.Println("haha")
@@ -33,12 +35,20 @@ func (t *Test) Stop() error {
 	return nil
 }
 
-func (t *Test) Run() error {
-	fmt.Println(`a`)
+func (t *Test) Run(ctx context.Context) error {
+	timer := time.NewTimer(0)
+	for {
+		select {
+		case <-ctx.Done():
+			return nil
+		case <-timer.C:
+			fmt.Println(1)
+			timer.Reset(2 * time.Second)
+		}
+	}
 	return nil
 }
 
 func (t *Test) GetName() string {
 	return "hsgh"
 }
-
