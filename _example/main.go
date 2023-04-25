@@ -1,51 +1,35 @@
-package task_driver
+package main
 
 import (
 	"context"
 	"fmt"
+	task_driver "github.com/pefish/go-task-driver"
 	"time"
 )
 
-func ExampleDriverType_Register() {
-	driver := NewTaskDriver()
+func main() {
+	driver := task_driver.NewTaskDriver()
 
 	driver.Register(&Test{})
 
 	ctx, cancel := context.WithCancel(context.Background())
 	go func() {
-		time.Sleep(4 * time.Second)
+		time.Sleep(5 * time.Second)
 		cancel()
 	}()
 	driver.RunWait(ctx)
-
-	// Output:
-	// 1
-	// 1
-	// haha
-	// xixi
 }
 
 type Test struct {
 }
 
 func (t *Test) Stop() error {
-	fmt.Println("haha")
-	time.Sleep(2 * time.Second)
-	fmt.Println("xixi")
+	fmt.Println("stop")
 	return nil
 }
 
 func (t *Test) Run(ctx context.Context) error {
-	timer := time.NewTimer(0)
-	for {
-		select {
-		case <-ctx.Done():
-			return nil
-		case <-timer.C:
-			fmt.Println(1)
-			timer.Reset(2 * time.Second)
-		}
-	}
+	fmt.Println(1)
 	return nil
 }
 
@@ -54,5 +38,5 @@ func (t *Test) GetName() string {
 }
 
 func (t *Test) GetInterval() time.Duration {
-	return 0
+	return 2 * time.Second
 }

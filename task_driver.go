@@ -4,12 +4,14 @@ import (
 	"context"
 	"github.com/pefish/go-logger"
 	"sync"
+	"time"
 )
 
 type Runner interface {
 	Run(ctx context.Context) error
 	Stop() error
 	GetName() string
+	GetInterval() time.Duration
 }
 
 type TaskDriver struct {
@@ -38,11 +40,30 @@ func (driver *TaskDriver) RunWait(ctx context.Context) {
 		driver.waitGroup.Add(1)
 		go func(runner Runner) {
 			defer driver.waitGroup.Done()
-			err := runner.Run(ctx)
-			if err != nil {
-				driver.logger.ErrorF("%#v", err)
+			if runner.GetInterval() == 0 {
+				err := runner.Run(ctx)
+				if err != nil {
+					driver.logger.ErrorF("%#v", err)
+				}
+				runner.Stop()
+				return
+			} else {
+				timer := time.NewTimer(0)
+				for {
+					select {
+					case <-timer.C:
+						err := runner.Run(ctx)
+						if err != nil {
+							driver.logger.ErrorF("%#v", err)
+						}
+						timer.Reset(runner.GetInterval())
+					case <-ctx.Done():
+						runner.Stop()
+						return
+					}
+				}
 			}
-			runner.Stop()
+
 		}(runner)
 	}
 	driver.waitGroup.Wait()
