@@ -12,12 +12,12 @@ type Runner interface {
 	Stop() error
 	GetName() string
 	GetInterval() time.Duration
+	GetLogger() go_logger.InterfaceLogger
 }
 
 type TaskDriver struct {
 	runners   []Runner
 	waitGroup sync.WaitGroup
-	logger    go_logger.InterfaceLogger
 }
 
 func NewTaskDriver() *TaskDriver {
@@ -25,10 +25,6 @@ func NewTaskDriver() *TaskDriver {
 		runners:   make([]Runner, 0),
 		waitGroup: sync.WaitGroup{},
 	}
-}
-
-func (driver *TaskDriver) SetLogger(logger go_logger.InterfaceLogger) {
-	driver.logger = logger
 }
 
 func (driver *TaskDriver) Register(runner Runner) {
@@ -43,7 +39,7 @@ func (driver *TaskDriver) RunWait(ctx context.Context) {
 			if runner.GetInterval() == 0 {
 				err := runner.Run(ctx)
 				if err != nil {
-					driver.logger.ErrorF("%#v", err)
+					runner.GetLogger().ErrorF("%#v", err)
 				}
 				runner.Stop()
 				return
@@ -54,7 +50,7 @@ func (driver *TaskDriver) RunWait(ctx context.Context) {
 					case <-timer.C:
 						err := runner.Run(ctx)
 						if err != nil {
-							driver.logger.ErrorF("%#v", err)
+							runner.GetLogger().ErrorF("%#v", err)
 						}
 						timer.Reset(runner.GetInterval())
 					case <-ctx.Done():

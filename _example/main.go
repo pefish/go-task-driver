@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"fmt"
+	"github.com/pefish/go-logger"
 	task_driver "github.com/pefish/go-task-driver"
 	"time"
 )
@@ -13,8 +13,12 @@ func main() {
 	driver.Register(&Test{})
 
 	ctx, cancel := context.WithCancel(context.Background())
+
+	//exitChan := make(chan os.Signal)
+	//signal.Notify(exitChan, syscall.SIGINT, syscall.SIGTERM)
+
 	go func() {
-		time.Sleep(5 * time.Second)
+		time.Sleep(2 * time.Second)
 		cancel()
 	}()
 	driver.RunWait(ctx)
@@ -23,13 +27,20 @@ func main() {
 type Test struct {
 }
 
+func (t *Test) GetLogger() go_logger.InterfaceLogger {
+	return go_logger.Logger
+}
+
 func (t *Test) Stop() error {
-	fmt.Println("stop")
+	t.GetLogger().Info("stopped")
 	return nil
 }
 
 func (t *Test) Run(ctx context.Context) error {
-	fmt.Println(1)
+	for {
+		t.GetLogger().Info(1)
+		time.Sleep(1 * time.Second)
+	}
 	return nil
 }
 
