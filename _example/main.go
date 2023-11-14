@@ -36,7 +36,7 @@ func (t *Test) Stop() error {
 	return nil
 }
 
-func (t *Test) Init() error {
+func (t *Test) Init(ctx context.Context) error {
 	t.GetLogger().Info("Inited.")
 	return nil
 }

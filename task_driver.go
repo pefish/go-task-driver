@@ -8,7 +8,7 @@ import (
 )
 
 type Runner interface {
-	Init() error
+	Init(ctx context.Context) error
 	Run(ctx context.Context) error
 	Stop() error
 	GetName() string
@@ -34,7 +34,7 @@ func (driver *TaskDriver) Register(runner Runner) {
 
 func (driver *TaskDriver) RunWait(ctx context.Context) {
 	for _, runner := range driver.runners {
-		err := runner.Init()
+		err := runner.Init(ctx)
 		if err != nil {
 			runner.GetLogger().ErrorF("Init failed. err: %+v", err)
 			continue
