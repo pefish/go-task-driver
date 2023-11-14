@@ -36,6 +36,11 @@ func (t *Test) Stop() error {
 	return nil
 }
 
+func (t *Test) Init() error {
+	t.GetLogger().Info("Inited.")
+	return nil
+}
+
 func (t *Test) Run(ctx context.Context) error {
 	for {
 		t.GetLogger().Info(1)

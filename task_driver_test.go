@@ -3,6 +3,7 @@ package task_driver
 import (
 	"context"
 	"fmt"
+	go_logger "github.com/pefish/go-logger"
 	"time"
 )
 
@@ -35,6 +36,10 @@ func (t *Test) Stop() error {
 	return nil
 }
 
+func (t *Test) Init() error {
+	return nil
+}
+
 func (t *Test) Run(ctx context.Context) error {
 	timer := time.NewTimer(0)
 	for {
@@ -55,4 +60,8 @@ func (t *Test) GetName() string {
 
 func (t *Test) GetInterval() time.Duration {
 	return 0
+}
+
+func (t *Test) GetLogger() go_logger.InterfaceLogger {
+	return go_logger.DefaultLogger
 }
