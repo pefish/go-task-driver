@@ -56,7 +56,7 @@ func (driver *TaskDriver) RunWait(ctx context.Context) {
 					case <-timer.C:
 						err := runner.Run(ctx)
 						if err != nil {
-							runner.GetLogger().ErrorF("%#v", err)
+							runner.GetLogger().ErrorF("%+v", err)
 						}
 						timer.Reset(runner.GetInterval())
 					case <-ctx.Done():

@@ -2,7 +2,7 @@ module github.com/pefish/go-task-driver
 
 go 1.20
 
-require github.com/pefish/go-logger v0.5.3
+require github.com/pefish/go-logger v0.5.5
 
 require (
 	github.com/BurntSushi/toml v0.3.1 // indirect
