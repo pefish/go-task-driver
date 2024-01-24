@@ -54,14 +54,14 @@ func (t *Test) Run(ctx context.Context) error {
 	return nil
 }
 
-func (t *Test) GetName() string {
+func (t *Test) Name() string {
 	return "hsgh"
 }
 
-func (t *Test) GetInterval() time.Duration {
+func (t *Test) Interval() time.Duration {
 	return 0
 }
 
-func (t *Test) GetLogger() go_logger.InterfaceLogger {
-	return go_logger.DefaultLogger
+func (t *Test) Logger() go_logger.InterfaceLogger {
+	return go_logger.Logger
 }

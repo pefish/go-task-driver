@@ -27,32 +27,32 @@ func main() {
 type Test struct {
 }
 
-func (t *Test) GetLogger() go_logger.InterfaceLogger {
+func (t *Test) Logger() go_logger.InterfaceLogger {
 	return go_logger.Logger
 }
 
 func (t *Test) Stop() error {
-	t.GetLogger().Info("stopped")
+	t.Logger().Info("stopped")
 	return nil
 }
 
 func (t *Test) Init(ctx context.Context) error {
-	t.GetLogger().Info("Inited.")
+	t.Logger().Info("Inited.")
 	return nil
 }
 
 func (t *Test) Run(ctx context.Context) error {
 	for {
-		t.GetLogger().Info(1)
+		t.Logger().Info(1)
 		time.Sleep(1 * time.Second)
 	}
 	return nil
 }
 
-func (t *Test) GetName() string {
+func (t *Test) Name() string {
 	return "hsgh"
 }
 
-func (t *Test) GetInterval() time.Duration {
+func (t *Test) Interval() time.Duration {
 	return 2 * time.Second
 }

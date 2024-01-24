@@ -11,9 +11,9 @@ type Runner interface {
 	Init(ctx context.Context) error
 	Run(ctx context.Context) error
 	Stop() error
-	GetName() string
-	GetInterval() time.Duration
-	GetLogger() go_logger.InterfaceLogger
+	Name() string
+	Interval() time.Duration
+	Logger() go_logger.InterfaceLogger
 }
 
 type TaskDriver struct {
@@ -36,16 +36,16 @@ func (driver *TaskDriver) RunWait(ctx context.Context) {
 	for _, runner := range driver.runners {
 		err := runner.Init(ctx)
 		if err != nil {
-			runner.GetLogger().ErrorF("Init failed. err: %+v", err)
+			runner.Logger().ErrorF("Init failed. err: %+v", err)
 			continue
 		}
 		driver.waitGroup.Add(1)
 		go func(runner Runner) {
 			defer driver.waitGroup.Done()
-			if runner.GetInterval() == 0 {
+			if runner.Interval() == 0 {
 				err := runner.Run(ctx)
 				if err != nil {
-					runner.GetLogger().ErrorF("%#v", err)
+					runner.Logger().ErrorF("%#v", err)
 				}
 				runner.Stop()
 				return
@@ -56,9 +56,9 @@ func (driver *TaskDriver) RunWait(ctx context.Context) {
 					case <-timer.C:
 						err := runner.Run(ctx)
 						if err != nil {
-							runner.GetLogger().ErrorF("%+v", err)
+							runner.Logger().ErrorF("%+v", err)
 						}
-						timer.Reset(runner.GetInterval())
+						timer.Reset(runner.Interval())
 					case <-ctx.Done():
 						runner.Stop()
 						return
