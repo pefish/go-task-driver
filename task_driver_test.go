@@ -3,8 +3,9 @@ package task_driver
 import (
 	"context"
 	"fmt"
-	go_logger "github.com/pefish/go-logger"
 	"time"
+
+	i_logger "github.com/pefish/go-interface/i-logger"
 )
 
 func ExampleDriverType_Register() {
@@ -62,6 +63,6 @@ func (t *Test) Interval() time.Duration {
 	return 0
 }
 
-func (t *Test) Logger() go_logger.InterfaceLogger {
-	return go_logger.Logger
+func (t *Test) Logger() i_logger.ILogger {
+	return &i_logger.DefaultLogger
 }

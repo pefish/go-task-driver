@@ -1,10 +1,7 @@
 module github.com/pefish/go-task-driver
 
-go 1.20
+go 1.21
 
-require github.com/pefish/go-logger v0.5.5
+toolchain go1.21.0
 
-require (
-	go.uber.org/multierr v1.11.0 // indirect
-	go.uber.org/zap v1.26.0 // indirect
-)
+require github.com/pefish/go-interface v0.0.10

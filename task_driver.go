@@ -2,9 +2,10 @@ package task_driver
 
 import (
 	"context"
-	"github.com/pefish/go-logger"
 	"sync"
 	"time"
+
+	i_logger "github.com/pefish/go-interface/i-logger"
 )
 
 type Runner interface {
@@ -13,7 +14,7 @@ type Runner interface {
 	Stop() error
 	Name() string
 	Interval() time.Duration
-	Logger() go_logger.InterfaceLogger
+	Logger() i_logger.ILogger
 }
 
 type TaskDriver struct {
